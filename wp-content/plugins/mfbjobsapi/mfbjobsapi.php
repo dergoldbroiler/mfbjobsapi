@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once 'includes/class-mfbjobsapi-plugin-setup.php';
+require_once 'class-mfbjobsapi-plugin-setup.php';
 //require_once 'includes/mfbjobsapi-plugin.php';
 $pluginHolder = new MFBJOBSAPI();
 

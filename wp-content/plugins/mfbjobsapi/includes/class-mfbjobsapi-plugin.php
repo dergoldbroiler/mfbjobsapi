@@ -23,7 +23,10 @@ class MFBJOBSAPI {
         add_shortcode('MFBJOBSAPI_alljobs', array($this, 'get_all_jobs'));
   
         // SC to test jobs, read from xml
-        add_shortcode('MFBJOBSAPI_xmljobs', array($this, 'get_jobs_from_xml'));
+        add_shortcode('MFBJOBSAPI_xmljobs', array($this, 'get_jobs_from_db'));
+        
+        // SC create the jobsearch field in backend, which searches through the jobdatabase
+        add_shortcode('MFBJOBSAPI_createjobsearch', array($this, 'set_jobs_search_field'));
        
         
         /*
@@ -50,6 +53,17 @@ class MFBJOBSAPI {
         define('MFBJOBSAPI_HiringOrgContactFaxNr','8269919');
     }
     
+    
+    /*
+    * SC Function, corresponding shortcode: MFBJOBSAPI_createjobsearch
+    */
+    public function set_jobs_search_field() {
+        $url = get_bloginfo('url').'/wp-content/plugins/mfbjobsapi/includes/class-mfbjobsapi-suggest.php';
+        $field = "<div id='jobs_search_field'><input type='text' data-suggest='".$url."' id='searchinput_KEY' class='form-control input-lg'><br>
+        <div class='searchformresult'></div></div>";
+        echo $field;
+    }
+       
     
     /*
     * SC Function, corresponding shortcode: MFBJOBSAPI_Version
@@ -119,101 +133,22 @@ class MFBJOBSAPI {
     * returns jobs as select list
     @returns: object connectToDB   
     */
-    public function get_jobs_from_xml() {
-        $xmlFileName = 'http://localhost:8888/mfbjobsapi/wp-content/plugins/mfbjobsapi/assets/arbeitsagentur/vam_beruf_kurz_P22_Testdatei.xml';
-       // $xmlString = $xmlfile; 
-
-        $doc = new DOMDocument();
-        $doc->load($xmlFileName);
-        $domElm = $doc->documentElement;
-        $xmlNodes = $domElm->childNodes;
-        foreach ($xmlNodes AS $item) {
-            $singleNode = $item->childNodes;
-              foreach ($singleNode AS $single) {
-                 $singleNode = $single->childNodes;
-              foreach ($singleNode AS $single) {
-                print_r($single);
-              }
-              }
-        }
-        
-        
+    public function get_jobs_from_db() {
+        $query = "SELECT * FROM `jobs_vam`";
+        $mysqli = MFBJOBSAPI::connectToDB();
+		$jobsArray = array();
+		if ($result = $mysqli->query($query)) {
+			
+			/* create single article-object and push to array */
+			 while($obj = $result->fetch_object()){ 
+				
+                 array_push($jobsArray, $obj);
+			 }
+		}
+        //print_r($jobsArray);
     }
     
-    public function get_node_content($nodes, $level){
-        $jobs = array();
-        $job = new stdClass();
-        
-        foreach ($nodes AS $item) {
-        MFBJOBSAPI::printValues($item, $level);
-          if ($item->nodeType == 1) { //DOMElement
-              foreach ($item->attributes AS $itemAtt) {
-                  MFBJOBSAPI::printValues($itemAtt, $level+3);
-              }
-              if($item->childNodes || $item->childNodes->lenth > 0) {
-                  MFBJOBSAPI::get_node_content($item->childNodes, 1);
-              }
-          }
-        }
-}
    
-public function printValues($item, $level){
-    $job = new stdClass();
-    if ($item->nodeType == 1) { //DOMElement
-      /*  MFBJOBSAPI::printLevel($level);
-        print $item->nodeName . " = " . $item->nodeValue;*/
-    }
-    if ($item->nodeType == 2) { //DOMAttr
-        MFBJOBSAPI::printLevel($level);
-        
-        if ( $item->name == "id") {
-            $job->jobid = $item->value;
-        }
-        
-        if ( $item->name == "bkz") {
-            $job->bkz = $item->value;
-        }
-         if ( $item->name == "kuenstler") {
-            $job->kuenstler = $item->value;
-        }
-    }
-    if ($item->nodeType == 3) { //DOMText
-       // print_r($item);
-        print $item->nodeName . " = " . $item->value ;
-      if ($item->isWhitespaceInElementContent() == false){
-        MFBJOBSAPI::printLevel($level);
-        print $item->wholeText ;
-      }
-    }
-    
-    print_r($job);
-}
-
-    public function get_object_content($item, $level, $which){
-        if ($item->nodeType == 2 && $item->nodeName == $which) { //DOMAttr
-           // MFBJOBSAPI::printLevel($level);
-           // print $item->name . " = " . $item->value ;
-            return $item->value;
-        }
-       /* if ($item->nodeType == 3) { //DOMText
-          if ($item->isWhitespaceInElementContent() == false){
-            MFBJOBSAPI::printLevel($level);
-            print $item->wholeText ;
-          }
-        } */
-        return false;
-    }
-
-public function printLevel($level)
-{
-    print "<br>";
-    if ($level == 0) {
-        print "<br>";
-    }
-    for($i=0; $i < $level; $i++) {
-        print "-";
-    }
-}
     
     /*
     * get all existing jobs in an array

@@ -64,7 +64,7 @@ class Plugin_MFBJOBSAPI {
 		//require_once PLUGIN_MFBJOBSAPI_PLUGIN_DIR . '/includes/admin/class-plugin-MFBJOBSAPI-settings.php';
 		//require_once PLUGIN_MFBJOBSAPI_PLUGIN_DIR . '/includes/admin/class-plugin-MFBJOBSAPI-settings-page.php';
 		// Include Plugin Classes.
-		require_once PLUGIN_MFBJOBSAPI_PLUGIN_DIR . '/class-mfbjobsapi-plugin.php';
+		require_once PLUGIN_MFBJOBSAPI_PLUGIN_DIR . '/includes/class-mfbjobsapi-plugin.php';
 	}
     
     
@@ -87,6 +87,7 @@ class Plugin_MFBJOBSAPI {
 	static function enqueue_styles() {
 		// Enqueue Plugin Stylesheet.
 		wp_enqueue_style( 'plugin-MFBJOBSAPI', PLUGIN_MFBJOBSAPI_PLUGIN_URL . 'assets/css/mfbjobsapi.css', array(), PLUGIN_MFBJOBSAPI_VERSION );
+        wp_enqueue_script( 'mfbjobapi', PLUGIN_MFBJOBSAPI_PLUGIN_URL . 'assets/js/mfbjobsapi.js', array(), '1.0.0', true );
 	}
     
   
