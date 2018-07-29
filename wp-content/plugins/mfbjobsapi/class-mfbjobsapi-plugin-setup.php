@@ -65,6 +65,7 @@ class Plugin_MFBJOBSAPI {
 		//require_once PLUGIN_MFBJOBSAPI_PLUGIN_DIR . '/includes/admin/class-plugin-MFBJOBSAPI-settings-page.php';
 		// Include Plugin Classes.
 		require_once PLUGIN_MFBJOBSAPI_PLUGIN_DIR . '/includes/class-mfbjobsapi-plugin.php';
+        require_once PLUGIN_MFBJOBSAPI_PLUGIN_DIR . '/includes/class-mfbjobsapi-backend.php';
 	}
     
     

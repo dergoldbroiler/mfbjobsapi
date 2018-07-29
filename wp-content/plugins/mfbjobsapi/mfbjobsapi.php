@@ -20,8 +20,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once 'class-mfbjobsapi-plugin-setup.php';
 //require_once 'includes/mfbjobsapi-plugin.php';
 $pluginHolder = new MFBJOBSAPI();
-
-// Run Plugin.
-//$pluginHolder->shortcoder();
-
 ?>
