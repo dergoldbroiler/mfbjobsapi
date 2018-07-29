@@ -1,3 +1,7 @@
 .searchformresult {
-    height:200px;width:100%;
+    min-height:200px;width:100%;height:auto;
+}
+#metabox_bezeichnung h2 {
+    background-color:skyblue;
+    color:darkblue !important;
 }

@@ -28,10 +28,11 @@ class MFBJOBSAPI_Backend {
     public function __construct()
     {
         
-            add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
+        add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
         add_action( 'save_post',      array( $this, 'save'         ) );
         
     }
+    
     
     /**
      * Adds the meta box container.
@@ -111,37 +112,7 @@ class MFBJOBSAPI_Backend {
      * @param WP_Post $post The post object.
      */
     public function render_meta_box_content( $post ) {
-        ?><script>
-        jQuery.noConflict();
-(function( $ ) {
-  $(function() {
-      
-    $('#searchinput_KEY').keyup( function () {
-
-				var current_input_length = $(this).val().length;
-				var current_input = $(this).val();
-                var suggest_url = $(this).attr('data-suggest'); 
-				if (current_input_length > 1) {
-
-					 	
-
-					$.post( suggest_url, { searchquery:current_input })
-
-					  .done(function( data ) {
-
-						console.log( "Data Loaded: " + data );
-
-						jQuery('.searchformresult').html(data);
-
-					  });
-
-					
-
-				}
-
-			})
-  });
-})(jQuery);</script>
+        ?>
  
         <?php
       $url = get_bloginfo('url').'/wp-content/plugins/mfbjobsapi/includes/class-mfbjobsapi-suggest.php';

@@ -78,6 +78,8 @@ class Plugin_MFBJOBSAPI {
 	static function setup_actions() {
 		// Enqueue Stylesheet.
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_styles' ) );
+        // Enqueue Stylesheet.
+		add_action( 'admin_init', array( __CLASS__, 'enqueue_styles' ) );
 	}
     
 	/**
