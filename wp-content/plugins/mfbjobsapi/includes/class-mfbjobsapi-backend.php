@@ -38,7 +38,7 @@ class MFBJOBSAPI_Backend {
      */
     public function add_meta_box( $post_type ) {
         // Limit meta box to certain post types.
-        $post_types = array( 'post', 'page' );
+        $post_types = array( 'job_listing' );
  
         if ( in_array( $post_type, $post_types ) ) {
             add_meta_box(

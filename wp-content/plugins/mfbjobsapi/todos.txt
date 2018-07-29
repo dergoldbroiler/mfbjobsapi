@@ -1,0 +1,10 @@
++++++++++++++++++++++
+++ Ideen ++++++++++++
++++++++++++++++++++++
+
+
+#metabox mit jobbezeichnung
+-> auswählbar machen, bei welchem post type sie angezeigt wird
+
+#sprache
+-> mehrsprachigkeit integrieren / howto?
