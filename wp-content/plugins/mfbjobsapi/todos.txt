@@ -8,3 +8,7 @@
 
 #sprache
 -> mehrsprachigkeit integrieren / howto?
+
+
+#datenbank
+-> variablen für eigene db-verbindung hinterlegen, vorgang automatisieren

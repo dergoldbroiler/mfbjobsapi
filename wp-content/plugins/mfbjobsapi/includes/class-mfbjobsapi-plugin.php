@@ -25,6 +25,10 @@ class MFBJOBSAPI {
         // SC to test jobs, read from xml
         add_shortcode('MFBJOBSAPI_xmljobs', array($this, 'get_jobs_from_db'));
         
+         // SC to test jobs, read from xml
+        add_shortcode('MFBJOBSAPI_jobmeta', array($this, 'get_job_meta'));
+       
+        
         // SC create the jobsearch field in backend, which searches through the jobdatabase
         add_shortcode('MFBJOBSAPI_createjobsearch', array($this, 'set_jobs_search_field'));
        
@@ -32,13 +36,17 @@ class MFBJOBSAPI {
         /*
         * CONSTANTS
         */
+        define('TABLEPREF','wp');
         define('MFBJOBSAPI_SupplierID','V000311000');
+        define('MFBJOBSAPI_AllianceID','13739');
+        define('MFBJOBSAPI_BACustomer','08791942');
         define('MFBJOBSAPI_SupplierIndustry',5); //5 = Arbeitgeber
         define('MFBJOBSAPI_HiringOrg','TVS Personalservice GmbH');
         define('MFBJOBSAPI_HiringOrgWeb','http://www.tvs-personalservice.de');
         define('MFBJOBSAPI_HiringOrgEmail','info@tvspersonalservice.de');
         define('MFBJOBSAPI_HiringOrgContactSalutation',1); // 1 = Sehr geehrter, 2 = Sehr geehrte, 3 = Sehr geehrte/r Herr / Frau
         define('MFBJOBSAPI_HiringOrgContactName','Schmidt');
+        define('MFBJOBSAPI_HiringOrgContactPositionTitle','Personaldisponent');
         define('MFBJOBSAPI_HiringOrgContactStreet','Friedrich-Ebert-Straße 16');
         define('MFBJOBSAPI_HiringOrgContactZip','06237');
         define('MFBJOBSAPI_HiringOrgContactCity','Leuna');
@@ -51,6 +59,8 @@ class MFBJOBSAPI {
         define('MFBJOBSAPI_HiringOrgContactMobileAreaCode','170');
         define('MFBJOBSAPI_HiringOrgContactMobileNr','9669624');
         define('MFBJOBSAPI_HiringOrgContactFaxNr','8269919');
+        
+         
     }
     
     
@@ -94,7 +104,7 @@ class MFBJOBSAPI {
     */
     
     public function get_xml_head() {        
-        $xmlcontent = '<?xml version="1.0" encoding="UTF-8"?><!--XML-Beispieldatei von XMLSpy generiert v2008 rel. 2 sp1 (http://www.altova.com)-->         
+        $xmlcontent = '<?xml version="1.0" encoding="UTF-8"?>         
                         <HRBAXMLJobPositionPosting>
                             <Header>
 		                      <SupplierId>'.MFBJOBSAPI_SupplierID.'</SupplierId>
@@ -125,6 +135,36 @@ class MFBJOBSAPI {
         /*
         needed: start- and enddate, status, action
         */
+        $query = "SELECT * FROM `".TABLEPREF."_postmeta` WHERE `post_id` = " . $jobid;
+        $mysqli = MFBJOBSAPI::connectToDB();
+		$job = new stdClass();
+		if ($result = $mysqli->query($query)) {
+			
+			/* create single article-object and push to array */
+			 while($obj = $result->fetch_object()){ 
+				if ( $obj->meta_key == "job_id") {
+                    $job->id = $obj->meta_value;
+                } 
+                if ( $obj->meta_key == "jobbezeichnung") {
+                    $job->jobtitle = $obj->meta_value;
+                } 
+                if ( $obj->meta_key == "job_bkz") {
+                    $job->bkz = $obj->meta_value;
+                } 
+                if ( $obj->meta_key == "_job_expires") {
+                    $job->jobend = $obj->meta_value;
+                } 
+                if ( $obj->meta_key == "jobstatus") {
+                    $job->jobstatus = $obj->meta_value;
+                } 
+                if ( $obj->meta_key == "jobaction") {
+                    $job->jobaction = $obj->meta_value;
+                } 
+               
+			 }
+		}
+        //print_r($job);
+        return $job;
     }
     
     
@@ -168,13 +208,18 @@ class MFBJOBSAPI {
         
         //loop through jobs
         foreach ( $jobs as $job ) {
-            $jobmeta = MFBJOBSAPI::get_job_meta($job->ID);
+           
+            $jobmeta = MFBJOBSAPI::get_job_meta($job->ID);  
+            if ( $jobmeta->jobtitle && $jobmeta->jobtitle != "") {
+            print_r($jobmeta);
+            //<Allianzpartnernummer>-<beliebigeEinzigartigeZeichenkette>-S
+            $jobPositioningPostingId = MFBJOBSAPI_AllianceID.'-'.$job->ID.'-S';
             $xmlcontent .= '<Data>
                                         <JobPositionPosting>
-                                            <JobPositionPostingId>'.$job->ID.'</JobPositionPostingId>
+                                            <JobPositionPostingId>'.$jobPositioningPostingId.'</JobPositionPostingId>
                                             <HiringOrg>
                                                 <HiringOrgName>'.MFBJOBSAPI_HiringOrg.'</HiringOrgName>
-                                                <HiringOrgId>'.MFBJOBSAPI_SupplierID.'</HiringOrgId>
+                                                <HiringOrgId>'.MFBJOBSAPI_BACustomer.'</HiringOrgId>
                                                 <ProfileWebSite>'.MFBJOBSAPI_HiringOrgWeb.'</ProfileWebSite>
                                                 <HiringOrgSize>2</HiringOrgSize>
                                                 <Industry>
@@ -220,11 +265,11 @@ class MFBJOBSAPI {
                                                 </Contact>
                                             </HiringOrg>			
                                             <PostDetail>
-                                                <StartDate>1967-08-13</StartDate>
-                                                <EndDate>1967-08-13</EndDate>
-                                                <LastModificationDate>2001-12-17T09:30:47.0Z</LastModificationDate>
-                                                <Status>1</Status>
-                                                <Action>1</Action>
+                                                <StartDate>'.date('Y-m-d').'</StartDate>
+                                                <EndDate>'.$jobmeta->jobend.'</EndDate>
+                                                <LastModificationDate/>
+                                                <Status>'.$jobmeta->jobstatus.'</Status>
+                                                <Action>'.$jobmeta->jobaction.'</Action>
                                                 <SupplierId>'.MFBJOBSAPI_SupplierID.'</SupplierId>
                                                 <SupplierName>'.MFBJOBSAPI_HiringOrg.'</SupplierName>
                                                 <SupplierIndustrie>'.MFBJOBSAPI_SupplierIndustry.'</SupplierIndustrie>
@@ -265,32 +310,32 @@ class MFBJOBSAPI {
                                                         <EMail>'.MFBJOBSAPI_HiringOrgEmail.'</EMail>
                                                         <JobContactWebSite/>
                                                         <InterviewContact>
-                                                            <Salutation>1</Salutation>
+                                                            <Salutation>'.MFBJOBSAPI_HiringOrgContactSalutation.'</Salutation>
                                                             <Title/>
                                                             <GivenName>a</GivenName>
                                                             <NamePrefix/>
-                                                            <FamilyName>a</FamilyName>
-                                                            <PositionTitle>a</PositionTitle>
+                                                            <FamilyName>'.MFBJOBSAPI_HiringOrgContactName.'</FamilyName>
+                                                            <PositionTitle>'.MFBJOBSAPI_HiringOrgContactPositionTitle.'</PositionTitle>
                                                             <VoiceNumber>
-                                                                <IntlCode>+0</IntlCode>
-                                                                <AreaCode>99999999999999</AreaCode>
-                                                                <TelNumber>9999999999999999999999999</TelNumber>
+                                                                <IntlCode>'.MFBJOBSAPI_HiringOrgContactPhoneCode.'</IntlCode>
+                                                                <AreaCode>'.MFBJOBSAPI_HiringOrgContactAreaCode.'</AreaCode>
+                                                                <TelNumber>'.MFBJOBSAPI_HiringOrgContactPhoneNr.'</TelNumber>
                                                             </VoiceNumber>
                                                             <MobilNumber>
-                                                                <IntlCode>+0</IntlCode>
-                                                                <AreaCode>99999999999999</AreaCode>
-                                                                <TelNumber>9999999999999999999999999</TelNumber>
+                                                                <IntlCode>'.MFBJOBSAPI_HiringOrgContactPhoneCode.'</IntlCode>
+                                                                <AreaCode>'.MFBJOBSAPI_HiringOrgContactMobileAreaCode.'</AreaCode>
+                                                                <TelNumber>'.MFBJOBSAPI_HiringOrgContactMobileNr.'</TelNumber>
                                                             </MobilNumber>
                                                             <FaxNumber>
-                                                                <IntlCode>+0</IntlCode>
-                                                                <AreaCode>99999999999999</AreaCode>
-                                                                <TelNumber>9999999999999999999999999</TelNumber>
+                                                                <IntlCode>'.MFBJOBSAPI_HiringOrgContactPhoneCode.'</IntlCode>
+                                                                <AreaCode>'.MFBJOBSAPI_HiringOrgContactAreaCode.'</AreaCode>
+                                                                <TelNumber>'.MFBJOBSAPI_HiringOrgContactPhoneNr.'</TelNumber>
                                                             </FaxNumber>
-                                                            <EMail>a</EMail>
+                                                            <EMail>'.MFBJOBSAPI_HiringOrgEmail.'</EMail>
                                                         </InterviewContact>
                                                         <InterviewLocation>
-                                                            <Location>a</Location>
-                                                            <CountryCode>AA</CountryCode>
+                                                            <Location></Location>
+                                                            <CountryCode>'.MFBJOBSAPI_HiringOrgContactCountry.'</CountryCode>
                                                             <PostalCode>a</PostalCode>
                                                             <Region>1</Region>
                                                             <Municipality>a</Municipality>
@@ -308,6 +353,8 @@ class MFBJOBSAPI {
                                                 </PostedBy>
                                                 <BASupervision>0</BASupervision>
                                                 <SupervisionDesired>0</SupervisionDesired>
+                                                
+                                                <!-- no BAContact, because BA Supervision = 0 --> 
                                                 <BAContact>
                                                     <Department/>
                                                     <Salutation>1</Salutation>
@@ -334,15 +381,151 @@ class MFBJOBSAPI {
                                                         <TelNumber>9999999999999999999999999</TelNumber>
                                                     </FaxNumber>
                                                     <EMail>a</EMail>
-                                                </BAContact>
-                                            </PostDetail>'; 
-        } // end foreach-loop through jobs
-        
+                                                </BAContact> 
+                                                <!-- /no BAContact-->
+                                                
+                                            </PostDetail>
+                                            <JobPositionInformation>
+                                                <JobPositionTitle>
+                                                    <TitleCode>000</TitleCode>
+                                                    <Degree>1</Degree>
+                                                </JobPositionTitle>
+                                                <AlternativeJobPositionTitle>
+                                                    <TitleCode>000</TitleCode>
+                                                    <Degree>1</Degree>
+                                                </AlternativeJobPositionTitle>
+                                                <JobPositionTitleDescription>'.$job->post_title.'</JobPositionTitleDescription>
+                                                <JobOfferType>1</JobOfferType>
+                                                <SpecialEngagement>1</SpecialEngagement>
+                                                <SocialInsurance>0</SocialInsurance>
+                                                <Objective>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</Objective>
+                                                <EducationAuthorisation>0</EducationAuthorisation>
+                                                <JobPositionDescription>
+                                                    <JobPositionLocation>
+                                                        <Location>
+                                                            <CountryCode>AA</CountryCode>
+                                                            <PostalCode>a</PostalCode>
+                                                            <Region>1</Region>
+                                                            <Municipality>a</Municipality>
+                                                            <District/>
+                                                            <AddressLine/>
+                                                            <StreetName/>
+                                                        </Location>
+                                                    </JobPositionLocation>
+                                                    <Application>
+                                                        <KindOfApplication>1</KindOfApplication>
+                                                        <ApplicationStartDate>1967-08-13</ApplicationStartDate>
+                                                        <ApplicationEndDate>1967-08-13</ApplicationEndDate>
+                                                        <EnclosuresRequired/>
+                                                    </Application>
+                                                    <Leadership>1</Leadership>
+                                                    <MiniJob>0</MiniJob>
+                                                    <Classification>
+                                                        <Schedule>
+                                                            <HoursPerWeek>1</HoursPerWeek>
+                                                            <WorkingPlan>1</WorkingPlan>
+                                                            <SummaryText/>
+                                                        </Schedule>
+                                                        <Duration>
+                                                            <TermLength>1</TermLength>
+                                                            <TermDate>1967-08-13</TermDate>
+                                                            <TemporaryOrRegular>1</TemporaryOrRegular>
+                                                            <TakeOver>0</TakeOver>
+                                                        </Duration>
+                                                    </Classification>
+                                                    <CompensationDescription>
+                                                        <Salary/>
+                                                        <DailyRate>1</DailyRate>
+                                                        <EmployerPayscaleBound>0</EmployerPayscaleBound>
+                                                        <CollectiveAgreement/>
+                                                        <InternalCompensation/>
+                                                    </CompensationDescription>
+                                                    <Housing>0</Housing>
+                                                </JobPositionDescription>
+                                                <JobPositionRequirements>
+                                                    <QualificationsRequired>
+                                                        <EducationQualifs>
+                                                            <EduDegree>1</EduDegree>
+                                                            <EduDegreeRequired>1</EduDegreeRequired>
+                                                            <School>
+                                                                <SubjectGerman>1</SubjectGerman>
+                                                                <SubjectEnglish>1</SubjectEnglish>
+                                                                <SubjectMaths>1</SubjectMaths>
+                                                                <OtherSubjects/>
+                                                            </School>
+                                                        </EducationQualifs>
+                                                        <ManagementQualifs>
+                                                            <LeadershipType>1</LeadershipType>
+                                                            <Authority>1</Authority>
+                                                            <LeadershipEx>1</LeadershipEx>
+                                                            <BudgetResp>1</BudgetResp>
+                                                            <EmployeeResp>1</EmployeeResp>
+                                                        </ManagementQualifs>
+                                                        <LanguageQualifs>
+                                                            <Language>
+                                                                <LanguageName>0</LanguageName>
+                                                                <LanguageLevel>0</LanguageLevel>
+                                                            </Language>
+                                                        </LanguageQualifs>
+                                                        <ProfessionalTrainingQualifs>
+                                                            <AdditionalInformation/>
+                                                            <ProfessionalTraining>
+                                                                <Title>
+                                                                    <TitleCode>000</TitleCode>
+                                                                    <Degree>1</Degree>
+                                                                </Title>
+                                                            </ProfessionalTraining>
+                                                        </ProfessionalTrainingQualifs>
+                                                        <Licences>
+                                                            <Licence>
+                                                                <LicenceName>0</LicenceName>
+                                                                <LicenceLevel>1</LicenceLevel>
+                                                            </Licence>
+                                                        </Licences>
+                                                        <CertificationQualifs>
+                                                            <Certification>
+                                                                <CertificationName>a</CertificationName>
+                                                                <Description/>
+                                                            </Certification>
+                                                        </CertificationQualifs>
+                                                        <SkillQualifs>
+                                                            <HardSkill>
+                                                                <SkillName>0</SkillName>
+                                                                <SkillLevel>1</SkillLevel>
+                                                            </HardSkill>
+                                                            <SoftSkill>
+                                                                <SkillName>1</SkillName>
+                                                            </SoftSkill>
+                                                        </SkillQualifs>
+                                                        <Mobility>
+                                                            <DrivingLicence>
+                                                                <DrivingLicenceName>0</DrivingLicenceName>
+                                                                <DrivingLicenceRequired>1</DrivingLicenceRequired>
+                                                            </DrivingLicence>
+                                                            <Vehicle>
+                                                                <Car>0</Car>
+                                                                <Motorcycle>0</Motorcycle>
+                                                                <Truck>0</Truck>
+                                                                <Omnibus>0</Omnibus>
+                                                            </Vehicle>
+                                                        </Mobility>
+                                                    </QualificationsRequired>
+                                                    <ProfessionalExperience>1</ProfessionalExperience>
+                                                    <TravelRequired>1</TravelRequired>
+                                                    <Handicap>1</Handicap>
+                                                </JobPositionRequirements>
+                                                <NumberToFill>0</NumberToFill>
+                                                <AssignmentStartDate>1967-08-13</AssignmentStartDate>
+                                                <AssignmentEndDate>1967-08-13</AssignmentEndDate>
+                                            </JobPositionInformation>'; 
+            } // end foreach-loop through jobs
+         }
         //get xml-footer
         $xmlcontent .= MFBJOBSAPI::get_xml_footer();
-        echo "<form><textarea cols=100 rows=30>". $xmlcontent . "</textarea></form>";
+        echo "<form><textarea cols=100 rows=30>". $jobmeta->id.$xmlcontent . "</textarea></form>";
        // print_r($jobs);
         
+   
     }
 
 }

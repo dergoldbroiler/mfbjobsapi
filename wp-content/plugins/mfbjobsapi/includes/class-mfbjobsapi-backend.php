@@ -66,14 +66,14 @@ class MFBJOBSAPI_Backend {
          */
  
         // Check if our nonce is set.
-        if ( ! isset( $_POST['myplugin_inner_custom_box_nonce'] ) ) {
+        if ( ! isset( $_POST['mfbjobsapi_inner_custom_box_nonce'] ) ) {
             return $post_id;
         }
  
-        $nonce = $_POST['myplugin_inner_custom_box_nonce'];
+        $nonce = $_POST['mfbjobsapi_inner_custom_box_nonce'];
  
         // Verify that the nonce is valid.
-        if ( ! wp_verify_nonce( $nonce, 'myplugin_inner_custom_box' ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'mfbjobsapi_inner_custom_box' ) ) {
             return $post_id;
         }
  
@@ -99,10 +99,18 @@ class MFBJOBSAPI_Backend {
         /* OK, it's safe for us to save the data now. */
  
         // Sanitize the user input.
-        $mydata = sanitize_text_field( $_POST['searchinput_KEY'] );
- 
-        // Update the meta field.
-        update_post_meta( $post_id, '_my_meta_value_key', $mydata );
+        $jobbezeichnung_val = sanitize_text_field( $_POST['jobbezeichnung'] );
+        $jobstatus_val = $_POST['jobstatus'];
+        $jobaction_val = $_POST['jobaction'];
+        $job_id_val = $_POST['job_id'];
+        $job_bkz_val = $_POST['job_bkz'];
+    
+        // Update the meta fields.
+        update_post_meta( $post_id, 'jobbezeichnung', $jobbezeichnung_val );
+        update_post_meta( $post_id, 'job_id', $job_id_val );
+        update_post_meta( $post_id, 'job_bkz', $job_bkz_val );
+        update_post_meta( $post_id, 'jobstatus', $jobstatus_val );
+        update_post_meta( $post_id, 'jobaction', $jobaction_val );
     }
  
  
@@ -112,24 +120,56 @@ class MFBJOBSAPI_Backend {
      * @param WP_Post $post The post object.
      */
     public function render_meta_box_content( $post ) {
-        ?>
- 
-        <?php
-      $url = get_bloginfo('url').'/wp-content/plugins/mfbjobsapi/includes/class-mfbjobsapi-suggest.php';
+     
+        //url of suggest script - needed for input field data-attribute -> data-suggest='<?php echo $url; 
+        $url = get_bloginfo('url').'/wp-content/plugins/mfbjobsapi/includes/class-mfbjobsapi-suggest.php';
       
         // Add an nonce field so we can check for it later.
-        wp_nonce_field( 'myplugin_inner_custom_box', 'myplugin_inner_custom_box_nonce' );
+        wp_nonce_field( 'mfbjobsapi_inner_custom_box', 'mfbjobsapi_inner_custom_box_nonce' );
  
         // Use get_post_meta to retrieve an existing value from the database.
-        $value = get_post_meta( $post->ID, '_my_meta_value_key', true );
- 
+        $jobbezeichnung_val = get_post_meta( $post->ID, 'jobbezeichnung', true );
+        $jobstatus_val = get_post_meta( $post->ID, 'jobstatus', true );
+        $jobaction_val = get_post_meta( $post->ID, 'jobaction', true );
+        $job_id_val = get_post_meta( $post->ID, 'job_id', true );
+        $job_bkz_val = get_post_meta( $post->ID, 'job_bkz', true );
+      
         // Display the form, using the current value.
         ?>
+
+
         <label for="searchinput_KEY">
             <?php _e( 'Mindest. 3 Zeichen (System sucht automatisch)', 'plugin-MFBJOBSAPI' ); ?>
         </label>
-        <input type='text' data-suggest='<?php echo $url; ?>' id='searchinput_KEY' class='form-control input-lg'><br>
+        <input value="<?php echo $jobbezeichnung_val; ?>" type='text' name="jobbezeichnung" data-suggest='<?php echo $url; ?>' id='searchinput_KEY' class='form-control input-lg mfbjobsapi-formelement'><br>
         <div class='searchformresult'></div>
+        <label for="jobstatus">
+            <?php _e( 'Status des Stellenangebotes', 'plugin-MFBJOBSAPI' ); ?>
+        </label>         
+        <!-- Angaben zum Veröffentlichungsstatus des Stellenangebots.  (1)veröffentlicht    (2)anonym veröffentlicht   (3)nicht veröffentlicht -->
+        <select name="jobstatus" class="mfbjobsapi-formelement" id="jobstatus">
+                <option value="1" <?php if ( $jobstatus_val == 1 ) { echo 'selected'; } ?>></option></optio>veröffentlicht</option>
+                <option value="2" <?php if ( $jobstatus_val == 2 ) { echo 'selected'; } ?>>anonym veröffentlicht</option>
+                <option value="3" <?php if ( $jobstatus_val == 3 ) { echo 'selected'; } ?>>nicht veröffentlicht</option>
+        </select><br>
+        
+        <label for="jobaction">
+            <?php _e( 'Action des Stellenangebotes', 'plugin-MFBJOBSAPI' ); ?>
+        </label> 
+        <!-- Action (1)neu    (2)update  (3)löschen -->
+        <select name="jobaction" class="mfbjobsapi-formelement" id="jobaction">
+                <option value="1" <?php if ( $jobaction_val == 1 ) { echo 'selected'; } ?>>Neuanlage</option>
+                <option value="2" <?php if ( $jobaction_val == 2 ) { echo 'selected'; } ?>>Aktualisierung</option>
+                <option value="3" <?php if ( $jobaction_val == 3 ) { echo 'selected'; } ?>>Löschung</option>
+        </select><br>
+        <label for="job_id">
+            <?php _e( 'ID des Berufes', 'plugin-MFBJOBSAPI' ); ?>
+        </label> 
+        <input value=<?php echo $job_id_val; ?> type='text' name="job_id" data-suggest='<?php echo $url; ?>' id='job_id' class='form-control input-lg mfbjobsapi-formelement'><br>
+        <label for="job_bkz">
+            <?php _e( 'Berufskennziffer', 'plugin-MFBJOBSAPI' ); ?>
+        </label> 
+        <input value="<?php echo $job_bkz_val; ?>" type='text' name="job_bkz" data-suggest='<?php echo $url; ?>' id='job_bkz' class='form-control input-lg mfbjobsapi-formelement'><br>
         <?php
     }
 }

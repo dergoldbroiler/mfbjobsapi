@@ -29,11 +29,23 @@ class Suggest {
 			/* create single article-object and push to array */
 			 while($obj = $result->fetch_object()){ 
 				
-                 $job = "<a href='#' data-jobtyp='".$obj->_typ."'>".$obj->bezeichnung."</a><br>"; 
+                 $job = "<a href='#' class='mfbjobsapi_joblink mfbjobsapi_link' data-jobtyp='".$obj->typ."' data-job_id='".$obj->_id."' data-job_bkz='".$obj->_bkz."'>".$obj->bezeichnung."</a><br>"; 
                  $jobs .= $job;
 			 }
 		}
-        echo $jobs;
+        
+        $javascript = "<script>jQuery('a.mfbjobsapi_joblink').click( function(ev){
+                ev.preventDefault();
+                //set chosen job as field value
+                var jobbezeichnung = jQuery(this).html(); 
+                var job_id = jQuery(this).attr('data-job_id');
+                var job_bkz = jQuery(this).attr('data-job_bkz');
+                jQuery('#searchinput_KEY').val(jobbezeichnung);    
+                jQuery('#job_id').val(job_id);    
+                jQuery('#job_bkz').val(job_bkz);
+                jQuery('.searchformresult').html('');
+          });</script>";
+        echo $jobs.$javascript;
     }
     
     

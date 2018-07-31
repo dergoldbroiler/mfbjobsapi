@@ -7,7 +7,7 @@ jQuery.noConflict();
 				var current_input_length = $(this).val().length;
 				var current_input = $(this).val();
                 var suggest_url = $(this).attr('data-suggest'); 
-				if (current_input_length > 1) {
+				if (current_input_length > 3) {
 
 					 	
 
@@ -23,9 +23,13 @@ jQuery.noConflict();
 
 					
 
-				}
+				} else {
+                    jQuery('.searchformresult').html('');
+                }
 
-			})
+			});
+      
+     
   });
 })(jQuery);
  
