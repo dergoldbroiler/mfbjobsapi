@@ -217,6 +217,9 @@ class MFBJOBSAPI {
                 if ( $obj->meta_key == "jobedutitle") {
                     $job->jobedutitle = $obj->meta_value;
                 }
+                 if ( $obj->meta_key == "jobeduname") {
+                    $job->jobeduname = $obj->meta_value;
+                }
          
                 //Lizenzen
                 if ( $obj->meta_key == "joblicense_1") {
@@ -518,10 +521,10 @@ class MFBJOBSAPI {
                                                         </Duration>
                                                     </Classification>
                                                     <CompensationDescription>
-                                                        <Salary/>
+                                                        <Salary>'.$jobmeta->jobsalary.'</Salary>
                                                         <DailyRate>1</DailyRate>
-                                                        <EmployerPayscaleBound>0</EmployerPayscaleBound>
-                                                        <CollectiveAgreement/>
+                                                        <EmployerPayscaleBound>'.$jobmeta->jobpayscale.'</EmployerPayscaleBound>
+                                                        <CollectiveAgreement>'.$jobmeta->jobagreement.'</CollectiveAgreement>
                                                         <InternalCompensation/>
                                                     </CompensationDescription>
                                                     <Housing>0</Housing>
