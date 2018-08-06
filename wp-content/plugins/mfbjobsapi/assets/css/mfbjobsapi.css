@@ -8,3 +8,22 @@
 .mfbjobsapi-formelement {
     display:block;width:100%
 }
+
+.tohide_jobtermbool,.tohide_jobagreement,.tohide {
+    display:none;
+}
+
+.container-fluid {
+    width:100%;
+    max:width:100%
+}
+.container-fluid .row {
+    display:flex;
+    justify-content:center;
+}
+.container-fluid .row .col2 {
+   width:50%;
+}
+.container-fluid .row .col1 {
+   width:100%;
+}

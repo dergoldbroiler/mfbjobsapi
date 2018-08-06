@@ -41,6 +41,11 @@ class Plugin_MFBJOBSAPI {
 		define( 'PLUGIN_MFBJOBSAPI_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		// Plugin Root File.
 		define( 'PLUGIN_MFBJOBSAPI_PLUGIN_FILE', __FILE__ );
+        
+        define( 'PLUGIN_MFBJOBSAPI_DB', 'mfbjobsapi' );
+        define( 'PLUGIN_MFBJOBSAPI_DBUSER', 'root' );
+        define( 'PLUGIN_MFBJOBSAPI_DBPW', 'root' );
+        define( 'PLUGIN_MFBJOBSAPI_DBHOST', 'localhost' );
 	}
     
     
