@@ -304,7 +304,7 @@ class MFBJOBSAPI {
             if ( $jobmeta->jobtitle && $jobmeta->jobtitle != "") {
             print_r($jobmeta);
             //<Allianzpartnernummer>-<beliebigeEinzigartigeZeichenkette>-S
-            $jobPositioningPostingId = MFBJOBSAPI_AllianceID.'-'.$job->ID.'-S';
+            $jobPositioningPostingId = MFBJOBSAPI_AllianceID.'-'.$job->ID.'2018-S';
             $xmlcontent .= '<Data>
                                         <JobPositionPosting>
                                             <JobPositionPostingId>'.$jobPositioningPostingId.'</JobPositionPostingId>
@@ -367,12 +367,13 @@ class MFBJOBSAPI {
                                                 <InternetReference>'.MFBJOBSAPI_HiringOrgWeb.'/'.$job->slug.'</InternetReference>
                                                 <PostedBy>
                                                     <Contact>
+                                                    <Company>'.MFBJOBSAPI_HiringOrg.'</Company>
                                                     <Salutation>'.MFBJOBSAPI_HiringOrgContactSalutation.'</Salutation>
                                                     <Title/>
                                                     <GivenName>'.MFBJOBSAPI_HiringOrgContactGivenName.'</GivenName>
                                                     <NamePrefix/>
                                                     <FamilyName>'.MFBJOBSAPI_HiringOrgContactName.'</FamilyName>
-                                                        <PositionTitle/>
+                                                        <PositionTitle>'.MFBJOBSAPI_HiringOrgContactPositionTitle.'</PositionTitle>
                                                         <PostalAddress>
                                                             <CountryCode>'.MFBJOBSAPI_HiringOrgContactCountry.'</CountryCode>
                                                             <PostalCode>'.MFBJOBSAPI_HiringOrgContactZip.'</PostalCode>
