@@ -1,7 +1,11 @@
 jQuery.noConflict();
 (function( $ ) {
   $(function() {
-    
+    if ( $('#jobleadership').val() != 1 ) {
+           $('.joblead').fadeIn();
+       } else {
+            $('.joblead').fadeOut();
+       } 
       
     $('.addrow').click ( function (ev) {
         ev.preventDefault();
@@ -12,18 +16,26 @@ jQuery.noConflict();
       
     $('#jobtermbool').change ( function () {
        if ( $(this).val() != 2 ) {
-           $('.tohide_jobtermbool').fadeIn();
+           $('.jobterm').fadeIn();
        } else {
-            $('.tohide_jobtermbool').fadeOut();
+            $('.jobterm').fadeOut();
        } 
     })
       
-    
-    $('#jobpayscale').change ( function () {
-       if ( $(this).val() != 0 ) {
-           $('.tohide_jobpayscale').fadeIn();
+    $('#jobleadership').change ( function () {
+       if ( $(this).val() != 1 ) {
+           $('.joblead').fadeIn();
        } else {
-            $('.tohide_jobpayscale').fadeOut();
+            $('.joblead').fadeOut();
+       } 
+    })
+    $('#jobpayscale').change ( function () {
+        
+       if ( $(this).val() == 1 ) {
+           $('.jobagreement').fadeIn();
+       } else {
+          
+            $('.jobagreement').fadeOut();
        } 
     })
       
@@ -88,13 +100,14 @@ jQuery.noConflict();
            	    
         var license_result = $(this).attr('data-license-result');
         var license_field_id = $(this).attr('id');
+        var license_name = $(this).attr('data-license-name');
         var current_input_length = $("#"+license_field_id).val().length;
 		var current_input = $("#"+license_field_id).val();
         var suggest_url = $("#"+license_field_id).attr('data-suggest'); 
             
         if (current_input_length > 3) {
 
-					$.post( suggest_url, { searchquery:current_input,searchtype: "license",resultdiv:"#"+license_field_id })
+					$.post( suggest_url, { searchquery:current_input,searchtype: "license",resultdiv:"#"+license_field_id,license_name:"."+license_name })
 
 					  .done(function( data ) {
 
@@ -107,6 +120,34 @@ jQuery.noConflict();
 
 				} else {
                     jQuery('.'+license_result).html('');
+                }
+
+			});
+    
+    $('.jobskills').keyup( function () {
+           	    
+        var skill_result = $(this).attr('data-skill-result');
+        var skill_field_id = $(this).attr('id');
+        //var skill_name = $(this).attr('data-skill-name');
+        var current_input_length = $("#"+skill_field_id).val().length;
+		var current_input = $("#"+skill_field_id).val();
+        var suggest_url = $("#"+skill_field_id).attr('data-suggest'); 
+            
+        if (current_input_length > 3) {
+
+					$.post( suggest_url, { searchquery:current_input,searchtype: "skill",resultdiv:"#"+skill_field_id })
+
+					  .done(function( data ) {
+
+						console.log( "Data Loaded: " + data );
+						jQuery('.'+skill_result).html(data);
+
+					  });
+
+					
+
+				} else {
+                    jQuery('.'+skill_result).html('');
                 }
 
 			});

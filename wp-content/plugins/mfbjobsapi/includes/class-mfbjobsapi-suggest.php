@@ -20,11 +20,14 @@ class Suggest {
     * returns jobs as links
     @returns: object connectToDB   
     */
-    public function get_jobs_from_db( $searchquery ) {
+    public function get_jobs_from_db( $searchquery, $licensename="" ) {
         if ( $_POST['searchtype'] == "job") { 
             $query = "SELECT * FROM `jobs_vam` WHERE `bezeichnung` LIKE '%".$searchquery."%'";
         }
         if ( $_POST['searchtype'] == "license") { 
+            $query = "SELECT * FROM `komp_vam` WHERE `bezeichnung` LIKE '%".$searchquery."%'";
+        }
+        if ( $_POST['searchtype'] == "skill") { 
             $query = "SELECT * FROM `komp_vam` WHERE `bezeichnung` LIKE '%".$searchquery."%'";
         }
         $mysqli = Suggest::connectToDB();
@@ -33,7 +36,7 @@ class Suggest {
 			
 			/* create single article-object and push to array */
 			 while($obj = $result->fetch_object()){ 
-			   $job = "<a href='#' class='mfbjobsapi_joblink mfbjobsapi_link' data-result='".$_POST['resultdiv']."' data-jobtyp='".$obj->typ."' data-job_id='".$obj->_id."' data-job_bkz='".$obj->_bkz."'>".$obj->bezeichnung."</a><br>"; 
+			   $job = "<a href='#' class='mfbjobsapi_joblink mfbjobsapi_link' data-result='".$_POST['resultdiv']."' data-jobtyp='".$obj->typ."' data-license-name='".$_POST['license_name']."' data-job_id='".$obj->_id."' data-job_bkz='".$obj->_bkz."'>".$obj->bezeichnung."</a><br>"; 
                  $jobs .= $job;
 			 }
 		}
@@ -55,7 +58,8 @@ class Suggest {
                 var jobbezeichnung = jQuery(this).html(); 
                 var job_id = jQuery(this).attr('data-job_id');
                 var job_bkz = jQuery(this).attr('data-job_bkz');
-                jQuery('#jobeduname').val(job_id);    
+                jQuery('#jobeduname').val(job_id); 
+                jQuery('.edutit').html(jobbezeichnung);
                 jQuery('#job_id').val(job_id);    
                 jQuery('#job_bkz').val(job_bkz);
                 jQuery('.searchformresult2').html('');
@@ -66,10 +70,25 @@ class Suggest {
                 //set chosen job as field value
                 var jobbezeichnung = jQuery(this).html(); 
                 var job_id = jQuery(this).attr('data-job_id');
+                var lic_name = jQuery(this).attr('data-license-name');
                 var job_bkz = jQuery(this).attr('data-job_bkz');
                 var resultdiv = jQuery(this).attr('data-result');
                 jQuery(resultdiv).val(job_id); 
+                jQuery(lic_name).html(jobbezeichnung);
                 jQuery('.licenseresult').html('');
+          }); jQuery( '.jobskillresult a.mfbjobsapi_joblink').click( function(ev){
+                ev.preventDefault();
+               // alert(jQuery(this).attr('data-result'));
+                
+                //set chosen job as field value
+                var jobbezeichnung = jQuery(this).html(); 
+                var job_id = jQuery(this).attr('data-job_id');
+                var lic_name = jQuery(this).attr('data-license-name');
+                var job_bkz = jQuery(this).attr('data-job_bkz');
+                var resultdiv = jQuery(this).attr('data-result');
+                jQuery(resultdiv).val(job_id); 
+                jQuery(lic_name).html(jobbezeichnung);
+                jQuery('.jobskillresult').html('');
           });</script>"; 
         echo $jobs.$javascript;
     }
@@ -89,10 +108,19 @@ if ( $_POST['searchquery']) {
     if ( $_POST['searchtype'] == "job") { 
 	   $suggest->get_jobs_from_db($_POST['searchquery']);
     }
+    //suggestion for jobtitles
+    if ( $_POST['searchtype'] == "skill") { 
+	   $suggest->get_jobs_from_db($_POST['searchquery']);
+    }
     
     //suggestion for joblicenses
     if ( $_POST['searchtype'] == "license") { 
-	   $suggest->get_jobs_from_db($_POST['searchquery']);
+        if ( isset ($_POST['license_name'])) {
+            $suggest->get_jobs_from_db($_POST['searchquery'],$_POST['license_name']);
+        }else {
+            $suggest->get_jobs_from_db($_POST['searchquery']);
+        }
+	   
     }
 
 }

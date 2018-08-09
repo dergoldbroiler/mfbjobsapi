@@ -122,7 +122,17 @@ class MFBJOBSAPI {
     */
     
     public function get_xml_footer() {
-        return '</HRBAXMLJobPositionPosting>';
+        return '<BAInternalInformation>
+				<InternalInformation/>
+				<MaximumPlacementSuggestions>0</MaximumPlacementSuggestions>
+				<PlacementSuggestionsIssued>0</PlacementSuggestionsIssued>
+				<MatchingStrategy>1</MatchingStrategy>
+			</BAInternalInformation>
+		</JobPositionPosting>
+		<DeleteEntry>
+			<EntryId>a</EntryId>
+		</DeleteEntry>
+	</Data></HRBAXMLJobPositionPosting>';
     }
     
     
@@ -220,7 +230,12 @@ class MFBJOBSAPI {
                  if ( $obj->meta_key == "jobeduname") {
                     $job->jobeduname = $obj->meta_value;
                 }
-         
+                if ( $obj->meta_key == "jobpkw") {
+                    $job->jobpkw = $obj->meta_value;
+                }
+                 if ( $obj->meta_key == "joblkw") {
+                    $job->joblkw = $obj->meta_value;
+                }
                 //Lizenzen
                 if ( $obj->meta_key == "joblicense_1") {
                     $job->joblicense_1 = $obj->meta_value;
@@ -241,6 +256,66 @@ class MFBJOBSAPI {
                 if ( $obj->meta_key == "joblicenselevel_3") {
                     $job->joblicenselevel_3 = $obj->meta_value; 
                 } 
+                if ( $obj->meta_key == "jobhighestdegree") {
+                    $job->jobhighestdegree = $obj->meta_value; 
+                }
+                if ( $obj->meta_key == "jobdegreemusthave") {
+                    $job->jobdegreemusthave = $obj->meta_value; 
+                }
+                if ( $obj->meta_key == "jobleadershiptype") {
+                    $job->jobleadershiptype = $obj->meta_value; 
+                } 
+                 if ( $obj->meta_key == "jobknow") {
+                    $job->jobknow = $obj->meta_value; 
+                } 
+                if ( $obj->meta_key == "jobauth") {
+                    $job->jobauth = $obj->meta_value; 
+                }
+                if ( $obj->meta_key == "jobleadershipex") {
+                    $job->jobleadershipex = $obj->meta_value; 
+                }
+                if ( $obj->meta_key == "jobbudget") {
+                    $job->jobbudget = $obj->meta_value; 
+                }
+                if ( $obj->meta_key == "jobemployers") {
+                    $job->jobemployers = $obj->meta_value; 
+                }
+                
+               for ( $ival=1; $ival<6; $ival++) {
+                   if ( $obj->meta_key == "jobskillsoft_".$ival) {
+                    $job->jobskillsoft[$ival] = $obj->meta_value; 
+                   }
+                   if ( $obj->meta_key == "jobskill_".$ival) {
+                    $job->jobskill[$ival] = $obj->meta_value; 
+                   }
+                   if ( $obj->meta_key == "jobskillvalue_".$ival) {
+                    $job->jobskillvalue[$ival] = $obj->meta_value; 
+                   }
+              }
+        
+                 
+                for ( $i=1; $i<11; $i++) {
+                    if ( $obj->meta_key == "joblocationplz_".$i) {
+                        $job->joblocationplz[$i] = $obj->meta_value; 
+                    }
+                    if ( $obj->meta_key == "joblocationregion_".$i) {
+                        $job->joblocationregion[$i] = $obj->meta_value; 
+                    } 
+                    if ( $obj->meta_key == "joblocationcity_".$i) {
+                        $job->joblocationcity[$i] = $obj->meta_value; 
+                    } 
+                    if ( $obj->meta_key == "joblocationstreet_".$i) {
+                        $job->joblocationstreet[$i] = $obj->meta_value; 
+                    } 
+                }
+                for ( $i=1; $i<4; $i++) {
+                    if ( $obj->meta_key == "jobskilldrive_".$i) {
+                        $job->jobskilldrive[$i] = $obj->meta_value; 
+                    }
+                    if ( $obj->meta_key == "jobskilldrivevalue_".$i) {
+                        $job->jobskilldrivevalue[$i] = $obj->meta_value; 
+                    }
+                }
 			 }
 		}
         //print_r($job);
@@ -284,11 +359,46 @@ class MFBJOBSAPI {
         //var to fill xml data in, starting with header
         $xmlcontent = MFBJOBSAPI::get_xml_head();
         $licenses = "";
+        $locations = "";
+        $skillssoft = "";
+        $skillshard = "";
+        $drive = "";
         // some vars
-        
+       
+         
         //loop through jobs
         foreach ( $jobs as $job ) {
-           
+            $jobmeta = MFBJOBSAPI::get_job_meta($job->ID); 
+            for ( $i=1; $i<6; $i++) {
+                if ($jobmeta->jobskillsoft[$i] ) {
+                    $skillssoft .=  '<SkillName>'.$jobmeta->jobskillsoft[$i].'</SkillName>';
+                }
+                if ($jobmeta->jobskill[$i] ) {
+                    $skillshard .=  '<SkillName>'.$jobmeta->jobskill[$i].'</SkillName>
+                                    <SkillLevel>'.$jobmeta->jobskillvalue[$i].'</SkillLevel>';
+                }
+                
+            }
+            for ( $i=1; $i<11; $i++) {
+                if ($jobmeta->joblocationplz[$i] && $jobmeta->joblocationcity[$i] ) {
+                    $locations .=  '<Location><CountryCode>DE</CountryCode>
+                                                            <PostalCode>'.$jobmeta->joblocationplz[$i].'</PostalCode>
+                                                            <Region>'.$jobmeta->joblocationregion[$i].'</Region>
+                                                            <Municipality>'.$jobmeta->joblocationcity[$i].'</Municipality>
+                                                            <District/>
+                                                            <AddressLine/>
+                                                            <StreetName>'.$jobmeta->joblocationstreet[$i].'</StreetName>
+                                                        </Location>';
+                }
+                
+            }
+            for ( $i=1; $i<4; $i++) {
+                if ($jobmeta->jobskilldrive[$i] ) {
+                    $drive .=  '<DrivingLicenceName>'.$jobmeta->jobskilldrive[$i].'</DrivingLicenceName>
+                                                                <DrivingLicenceRequired>'.$jobmeta->jobskilldrivevalue[$i].'</DrivingLicenceRequired>';
+                }
+                
+            }
             if ( $job->joblicense_1 && $job->joblicense_1 != "") {
                 $licenses .= "<Licence><LicenceName>".$job->joblicense_1."</LicenceName>                                                                <LicenceLevel>".$job->joblicenselevel_1."</LicenceLevel>
                 </Licence>";
@@ -303,9 +413,9 @@ class MFBJOBSAPI {
                 $licenses .= "<Licence><LicenceName>".$job->joblicense_3."</LicenceName>                                                                <LicenceLevel>".$job->joblicenselevel_3."</LicenceLevel>
                 </Licence>";
             }
-            $jobmeta = MFBJOBSAPI::get_job_meta($job->ID);  
+             
             if ( $jobmeta->jobtitle && $jobmeta->jobtitle != "") {
-            print_r($jobmeta);
+       
             //<Allianzpartnernummer>-<beliebigeEinzigartigeZeichenkette>-S
             $jobPositioningPostingId = MFBJOBSAPI_AllianceID.'-'.$job->ID.'2018-S';
             $xmlcontent .= '<Data>
@@ -407,7 +517,7 @@ class MFBJOBSAPI {
                                                         <InterviewContact>
                                                             <Salutation>'.MFBJOBSAPI_HiringOrgContactSalutation.'</Salutation>
                                                             <Title/>
-                                                            <GivenName>a</GivenName>
+                                                            <GivenName>'.MFBJOBSAPI_HiringOrgGivenName.'</GivenName>
                                                             <NamePrefix/>
                                                             <FamilyName>'.MFBJOBSAPI_HiringOrgContactName.'</FamilyName>
                                                             <PositionTitle>'.MFBJOBSAPI_HiringOrgContactPositionTitle.'</PositionTitle>
@@ -429,20 +539,20 @@ class MFBJOBSAPI {
                                                             <EMail>'.MFBJOBSAPI_HiringOrgEmail.'</EMail>
                                                         </InterviewContact>
                                                         <InterviewLocation>
-                                                            <Location></Location>
+                                                            <Location>'.MFBJOBSAPI_HiringOrgWeb.', '.MFBJOBSAPI_HiringOrgContactCity.'</Location>
                                                             <CountryCode>'.MFBJOBSAPI_HiringOrgContactCountry.'</CountryCode>
-                                                            <PostalCode>a</PostalCode>
-                                                            <Region>1</Region>
-                                                            <Municipality>a</Municipality>
+                                                            <PostalCode>'.MFBJOBSAPI_HiringOrgContactZip.'</PostalCode>
+                                                            <Region>'.MFBJOBSAPI_HiringOrgContactRegion.'</Region>
+                                                            <Municipality/>
                                                             <District/>
                                                             <AddressLine/>
-                                                            <StreetName>a</StreetName>
+                                                            <StreetName>'.MFBJOBSAPI_HiringOrgContactStreet.'</StreetName>
                                                         </InterviewLocation>
                                                         <Interview>
-                                                            <InterviewDate>1967-08-13</InterviewDate>
-                                                            <InterviewTime>00:00</InterviewTime>
-                                                            <RoomNumber>a</RoomNumber>
-                                                            <AdditionalInformation>a</AdditionalInformation>
+                                                            <InterviewDate></InterviewDate>
+                                                            <InterviewTime>0</InterviewTime>
+                                                            <RoomNumber></RoomNumber>
+                                                            <AdditionalInformation></AdditionalInformation>
                                                         </Interview>
                                                     </Contact>
                                                 </PostedBy>
@@ -450,30 +560,30 @@ class MFBJOBSAPI {
                                                 <SupervisionDesired>0</SupervisionDesired>                                                
                                                 <BAContact>
                                                     <Department/>
-                                                    <Salutation>1</Salutation>
+                                                    <Salutation></Salutation>
                                                     <Title/>
-                                                    <NamePrefix>String</NamePrefix>
+                                                    <NamePrefix></NamePrefix>
                                                     <FamilyName/>
                                                     <PostalAddress>
-                                                        <CountryCode>AA</CountryCode>
-                                                        <PostalCode>a</PostalCode>
-                                                        <Region>1</Region>
-                                                        <Municipality>a</Municipality>
+                                                        <CountryCode></CountryCode>
+                                                        <PostalCode></PostalCode>
+                                                        <Region></Region>
+                                                        <Municipality></Municipality>
                                                         <District/>
                                                         <AddressLine/>
-                                                        <StreetName>a</StreetName>
+                                                        <StreetName></StreetName>
                                                     </PostalAddress>
                                                     <VoiceNumber>
-                                                        <IntlCode>+0</IntlCode>
-                                                        <AreaCode>99999999999999</AreaCode>
-                                                        <TelNumber>9999999999999999999999999</TelNumber>
+                                                        <IntlCode></IntlCode>
+                                                        <AreaCode></AreaCode>
+                                                        <TelNumber></TelNumber>
                                                     </VoiceNumber>
                                                     <FaxNumber>
-                                                        <IntlCode>+0</IntlCode>
-                                                        <AreaCode>99999999999999</AreaCode>
-                                                        <TelNumber>9999999999999999999999999</TelNumber>
+                                                        <IntlCode></IntlCode>
+                                                        <AreaCode></AreaCode>
+                                                        <TelNumber></TelNumber>
                                                     </FaxNumber>
-                                                    <EMail>a</EMail>
+                                                    <EMail></EMail>
                                                 </BAContact> 
                                             </PostDetail>
                                             <JobPositionInformation>
@@ -484,21 +594,12 @@ class MFBJOBSAPI {
                                                 <AlternativeJobPositionTitle/>
                                                 <JobPositionTitleDescription>'.$job->post_title.'</JobPositionTitleDescription>
                                                 <JobOfferType>'.$jobmeta->joboffertype.'</JobOfferType>
-                                                <SpecialEngagement>1</SpecialEngagement>
                                                 <SocialInsurance>'.$jobmeta->jobsocialinsurance.'</SocialInsurance>
                                                 <Objective>'.$job->post_content.'</Objective>
                                                 <EducationAuthorisation>0</EducationAuthorisation>
                                                 <JobPositionDescription>
                                                     <JobPositionLocation>
-                                                        <Location>
-                                                            <CountryCode>DE</CountryCode>
-                                                            <PostalCode>'.$jobmeta->geolocation_postcode.'</PostalCode>
-                                                            <Region>'.$jobmeta->state_long.'</Region>
-                                                            <Municipality>'.$jobmeta->geolocation_city.'</Municipality>
-                                                            <District/>
-                                                            <AddressLine/>
-                                                            <StreetName/>
-                                                        </Location>
+                                                        '.$locations.'
                                                     </JobPositionLocation>
                                                     <Application>
                                                         <KindOfApplication>'.$jobmeta->jobapplication.'</KindOfApplication>
@@ -515,26 +616,26 @@ class MFBJOBSAPI {
                                                             <SummaryText/>
                                                         </Schedule>
                                                         <Duration>
-                                                            <TermLength>'.$jobmeta->jobworkingplan.'</TermLength>
-                                                            <TermDate>'.$jobmeta->jobworkingplan.'</TermDate>
-                                                            <TemporaryOrRegular>'.$jobmeta->jobworkingplan.'</TemporaryOrRegular>
-                                                            <TakeOver>'.$jobmeta->jobworkingplan.'</TakeOver>
+                                                            <TermLength>'.$jobmeta->jobtermlength.'</TermLength>
+                                                            <TermDate>'.$jobmeta->jobtermdate.'</TermDate>
+                                                            <TemporaryOrRegular>'.$jobmeta->jobtermbool.'</TemporaryOrRegular>
+                                                            <TakeOver>'.$jobmeta->jobtermtakeover.'</TakeOver>
                                                         </Duration>
                                                     </Classification>
                                                     <CompensationDescription>
                                                         <Salary>'.$jobmeta->jobsalary.'</Salary>
-                                                        <DailyRate>1</DailyRate>
+                                                        <DailyRate></DailyRate>
                                                         <EmployerPayscaleBound>'.$jobmeta->jobpayscale.'</EmployerPayscaleBound>
                                                         <CollectiveAgreement>'.$jobmeta->jobagreement.'</CollectiveAgreement>
                                                         <InternalCompensation/>
                                                     </CompensationDescription>
-                                                    <Housing>0</Housing>
+                                                    <Housing>'.$jobmeta->jobhousing.'</Housing>
                                                 </JobPositionDescription>
                                                 <JobPositionRequirements>
                                                     <QualificationsRequired>
                                                         <EducationQualifs>
-                                                            <EduDegree>1</EduDegree>
-                                                            <EduDegreeRequired>1</EduDegreeRequired>
+                                                            <EduDegree>'.$jobmeta->jobhighestdegree.'</EduDegree>
+                                                            <EduDegreeRequired>'.$jobmeta->jobdegreemusthave.'</EduDegreeRequired>
                                                             <School>
                                                                 <SubjectGerman>1</SubjectGerman>
                                                                 <SubjectEnglish>1</SubjectEnglish>
@@ -543,11 +644,11 @@ class MFBJOBSAPI {
                                                             </School>
                                                         </EducationQualifs>
                                                         <ManagementQualifs>
-                                                            <LeadershipType>1</LeadershipType>
-                                                            <Authority>1</Authority>
-                                                            <LeadershipEx>1</LeadershipEx>
-                                                            <BudgetResp>1</BudgetResp>
-                                                            <EmployeeResp>1</EmployeeResp>
+                                                            <LeadershipType>'.$jobmeta->jobleadershiptype.'</LeadershipType>
+                                                            <Authority>'.$jobmeta->jobauth.'</Authority>
+                                                            <LeadershipEx>'.$jobmeta->jobleadershipex.'</LeadershipEx>
+                                                            <BudgetResp>'.$jobmeta->jobbudget.'</BudgetResp>
+                                                            <EmployeeResp>'.$jobmeta->jobemployers.'</EmployeeResp>
                                                         </ManagementQualifs>
                                                         <LanguageQualifs>
                                                             <Language>
@@ -574,29 +675,27 @@ class MFBJOBSAPI {
                                                         </CertificationQualifs>
                                                         <SkillQualifs>
                                                             <HardSkill>
-                                                                <SkillName>0</SkillName>
-                                                                <SkillLevel>1</SkillLevel>
+                                                                '.$skillshard.'
                                                             </HardSkill>
                                                             <SoftSkill>
-                                                                <SkillName>1</SkillName>
+                                                                '.$skillssoft.'
                                                             </SoftSkill>
                                                         </SkillQualifs>
                                                         <Mobility>
                                                             <DrivingLicence>
-                                                                <DrivingLicenceName>0</DrivingLicenceName>
-                                                                <DrivingLicenceRequired>1</DrivingLicenceRequired>
+                                                                '.$drive.'
                                                             </DrivingLicence>
                                                             <Vehicle>
-                                                                <Car>0</Car>
+                                                                <Car>'.$jobmeta->jobpkw.'</Car>
                                                                 <Motorcycle>0</Motorcycle>
-                                                                <Truck>0</Truck>
+                                                                <Truck>'.$jobmeta->joblkw.'</Truck>
                                                                 <Omnibus>0</Omnibus>
                                                             </Vehicle>
                                                         </Mobility>
                                                     </QualificationsRequired>
-                                                    <ProfessionalExperience>1</ProfessionalExperience>
+                                                    <ProfessionalExperience>'.$jobmeta->jobknow.'</ProfessionalExperience>
                                                     <TravelRequired>1</TravelRequired>
-                                                    <Handicap>1</Handicap>
+                                                    <Handicap>2</Handicap>
                                                 </JobPositionRequirements>
                                                 <NumberToFill>0</NumberToFill>
                                                 <AssignmentStartDate>1967-08-13</AssignmentStartDate>
@@ -615,6 +714,7 @@ class MFBJOBSAPI {
         
    
     }
+   
 
 }
 
