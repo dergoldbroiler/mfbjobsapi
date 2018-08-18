@@ -9,12 +9,20 @@
 #metabox_bezeichnung h2 {
     background-color:skyblue;
     color:darkblue !important;
+    font-size: 2em !important;
 }
-.mfbjobsapi-formelement {
+.padding10 {
+    padding:10px 0 !important;
+}
+h2.subhead {
+    font-size: 2em !important;
+}
+.boxlabel { padding:15px 0px;display:block;font-weight:600;font-size: 1.1em !important;}
+.mfbjobsapi-formelement,.btn_add_elm {
     display:block;width:100%
 }
 
-.tohide_jobtermbool,.tohide_jobagreement,.tohide {
+.tohide_jobtermbool,.tohide_jobagreement,.tohide,.tocheck {
     display:none;
 }
 
@@ -22,15 +30,39 @@
     width:100%;
     max:width:100%
 }
+
 .container-fluid .row {
     display:flex;
     justify-content:center;
 }
 .container-fluid .row .col2 {
    width:50%;
+    padding:10px 0;
 }
 .container-fluid .row .col1 {
-   width:100%;
+   width:100%;  padding:10px 0;
+}
+.boxtitle {
+    width:100%;
+    cursor:pointer;
+    background-color:lightgrey
+}
+.boxtitle h3 {
+    width:90%;
+    cursor:pointer;
+    background-color:lightgrey !important;
+    padding:10px;
+}
+.onoffbtn{
+    cursor:pointer;
+    float:right;font-size:0.8em
 }
 
+.btn_add_elm {
+    margin-bottom:20px
+}
 .btn-default{color:#333;background-color:#fff;border-color:#ccc}.btn-default.focus,.btn-default:focus{color:#333;background-color:#e6e6e6;border-color:#8c8c8c}.btn-default:hover{color:#333;background-color:#e6e6e6;border-color:#adadad}.btn-default.active,.btn-default:active,.open>.dropdown-toggle.btn-default{color:#333;background-color:#e6e6e6;border-color:#adadad}.btn-default.active.focus,.btn-default.active:focus,.btn-default.active:hover,.btn-default:active.focus,.btn-default:active:focus,.btn-default:active:hover,.open>.dropdown-toggle.btn-default.focus,.open>.dropdown-toggle.btn-default:focus,.open>.dropdown-toggle.btn-default:hover{color:#333;background-color:#d4d4d4;border-color:#8c8c8c}.btn-default.active,.btn-default:active,.open>.dropdown-toggle.btn-default{background-image:none}.btn-default.disabled.focus,.btn-default.disabled:focus,.btn-default.disabled:hover,.btn-default[disabled].focus,.btn-default[disabled]:focus,.btn-default[disabled]:hover,fieldset[disabled] .btn-default.focus,fieldset[disabled] .btn-default:focus,fieldset[disabled] .btn-default:hover{background-color:#fff;border-color:#ccc}.btn-default .badge{color:#fff;background-color:#333}
+
+.notice.notice-error:nth-child(2) {
+    display:none !important
+}

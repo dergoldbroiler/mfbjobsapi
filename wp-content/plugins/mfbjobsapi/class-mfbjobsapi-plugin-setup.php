@@ -19,10 +19,13 @@ class Plugin_MFBJOBSAPI {
 		self::constants();
 		// Setup Translation.
 		add_action( 'plugins_loaded', array( __CLASS__, 'translation' ) );
-		// Include Files.
+        // Include Files.
 		self::includes();
 		// Setup Action Hooks.
 		self::setup_actions();
+       
+        
+        
 	}
     
 	/**
@@ -42,10 +45,8 @@ class Plugin_MFBJOBSAPI {
 		// Plugin Root File.
 		define( 'PLUGIN_MFBJOBSAPI_PLUGIN_FILE', __FILE__ );
         
-        define( 'PLUGIN_MFBJOBSAPI_DB', 'mfbjobsapi' );
-        define( 'PLUGIN_MFBJOBSAPI_DBUSER', 'root' );
-        define( 'PLUGIN_MFBJOBSAPI_DBPW', 'root' );
-        define( 'PLUGIN_MFBJOBSAPI_DBHOST', 'localhost' );
+        define( 'PLUGIN_MFBJOBSAPI_DB_PREFIX', 'wp_' );
+     
 	}
     
     
@@ -59,6 +60,8 @@ class Plugin_MFBJOBSAPI {
 	}
     
     
+    
+   
 	/**
 	 * Include required files
 	 *
@@ -85,6 +88,7 @@ class Plugin_MFBJOBSAPI {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_styles' ) );
         // Enqueue Stylesheet.
 		add_action( 'admin_init', array( __CLASS__, 'enqueue_styles' ) );
+        add_action( 'admin_init', array( __CLASS__, 'get_user_back' ) );
 	}
     
 	/**
@@ -96,6 +100,7 @@ class Plugin_MFBJOBSAPI {
 		// Enqueue Plugin Stylesheet.
 		wp_enqueue_style( 'plugin-MFBJOBSAPI', PLUGIN_MFBJOBSAPI_PLUGIN_URL . 'assets/css/mfbjobsapi.css', array(), PLUGIN_MFBJOBSAPI_VERSION );
         wp_enqueue_script( 'mfbjobapi', PLUGIN_MFBJOBSAPI_PLUGIN_URL . 'assets/js/mfbjobsapi.js', array(), '1.0.0', true );
+        //wp_enqueue_script( 'jquery', PLUGIN_MFBJOBSAPI_PLUGIN_URL . 'assets/js/jquery_ui_1_12_1.js', array(), '1.0.0', true );
 	}
     
   

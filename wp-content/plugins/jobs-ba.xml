@@ -56,11 +56,11 @@
                                                 </Contact>
                                             </HiringOrg>			
                                             <PostDetail>
-                                                <StartDate>2018-08-09</StartDate>
+                                                <StartDate>2018-08-14</StartDate>
                                                 <EndDate>2018-08-29</EndDate>
                                                 <LastModificationDate/>
                                                 <Status>1</Status>
-                                                <Action>2</Action>
+                                                <Action>1</Action>
                                                 <SupplierId>V000311000</SupplierId>
                                                 <SupplierName>TVS Personalservice GmbH</SupplierName>
                                                 <SupplierIndustrie>5</SupplierIndustrie>
@@ -175,10 +175,14 @@
                                             </PostDetail>
                                             <JobPositionInformation>
                                                 <JobPositionTitle>
-                                                    <TitleCode>3632</TitleCode>
+                                                    <TitleCode>1845</TitleCode>
                                                     <Degree>1</Degree>
                                                 </JobPositionTitle>
-                                                <AlternativeJobPositionTitle/>
+                                                <AlternativeJobPositionTitle>
+                                                    <TitleCode>3623</TitleCode>
+                                                    <Degree>1</Degree><TitleCode>_id</TitleCode>
+                                                    <Degree>1</Degree>
+                                                </AlternativeJobPositionTitle>
                                                 <JobPositionTitleDescription>CNC-Fachkräfte / Zerspanungsmechaniker</JobPositionTitleDescription>
                                                 <JobOfferType>38</JobOfferType>
                                                 <SocialInsurance>1</SocialInsurance>
@@ -209,17 +213,17 @@ Haben wir Ihr Interesse geweckt, freuen wir uns auf Ihre Bewerbung.</Objective>
                                                             <AddressLine/>
                                                             <StreetName>teststr 23</StreetName>
                                                         </Location><Location><CountryCode>DE</CountryCode>
-                                                            <PostalCode>07868</PostalCode>
-                                                            <Region>13</Region>
-                                                            <Municipality>leipzig</Municipality>
+                                                            <PostalCode>06114</PostalCode>
+                                                            <Region>1</Region>
+                                                            <Municipality>Halle</Municipality>
                                                             <District/>
                                                             <AddressLine/>
-                                                            <StreetName>glglglgk</StreetName>
+                                                            <StreetName></StreetName>
                                                         </Location>
                                                     </JobPositionLocation>
                                                     <Application>
                                                         <KindOfApplication>1,2,3,4,7</KindOfApplication>
-                                                        <ApplicationStartDate>2018-08-09</ApplicationStartDate>
+                                                        <ApplicationStartDate>2018-08-14</ApplicationStartDate>
                                                         <ApplicationEndDate></ApplicationEndDate>
                                                         <EnclosuresRequired/>
                                                     </Application>
@@ -283,6 +287,7 @@ Haben wir Ihr Interesse geweckt, freuen wir uns auf Ihre Bewerbung.</Objective>
                                                         </ProfessionalTrainingQualifs>
                                                         <Licences><Licence><LicenceName>60117</LicenceName>                                                                <LicenceLevel>1</LicenceLevel>
                 </Licence><Licence><LicenceName>60188</LicenceName>                                                                <LicenceLevel>1</LicenceLevel>
+                </Licence><Licence><LicenceName>fach</LicenceName>                                                                <LicenceLevel>1</LicenceLevel>
                 </Licence>
                                                         </Licences>
                                                         <CertificationQualifs>

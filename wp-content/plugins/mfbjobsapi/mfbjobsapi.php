@@ -16,9 +16,24 @@ Author URI: http://madeforbrowser.com
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
+ if( ! session_id() )
+      {
+        session_start();
+     //$_SESSION['filename']
+      }
 require_once 'class-mfbjobsapi-plugin-setup.php';
+
 //require_once 'includes/mfbjobsapi-plugin.php';
 $pluginHolder = new MFBJOBSAPI();
-$pluginHolder->get_jobs_from_db();
+if ( $_GET['page'] == "jobexport") {
+    destsession();
+$pluginHolder->get_all_jobs();
+}
+add_action('wp_login', 'destsession');
+function destsession() {
+   session_destroy();
+}
+
+ 
+     
 ?>

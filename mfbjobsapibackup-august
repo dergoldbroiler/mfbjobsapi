@@ -1,0 +1,298 @@
+jQuery.noConflict();
+
+(function( $ ) {
+  $(function() {
+      
+      
+      $(document).ready ( function () {
+          
+          /*
+          * accordeon panels
+          */
+          $('.boxtitle').click ( function () {
+            //  $('.boxcontent').slideUp();
+              var nextcontent = $(this).next('.boxcontent').css('display');
+              if (nextcontent == "none"){
+                  $(this).next('.boxcontent').slideDown();
+              } else {
+                  $(this).next('.boxcontent').slideUp();
+              }
+          });
+          
+          if ( $('#jobbezeichnung_3').val() == "" ) {
+              $('#jobedudegree_3').hide();
+          }
+          if ( $('#jobbezeichnung_2').val() == "" ) {
+              $('#jobedudegree_2').hide();
+          }
+          
+          $( ".datepicker" ).datepicker();
+          $( ".datepicker" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+          
+           
+        
+      });
+ 
+     
+      /* check for correct job list */
+      $('#jobaction').change ( function () {
+         var errors = "";
+         var boolerr = false;
+       
+          if ( $(this).val() == 1 ) { // Jobaction Neuanlage
+              if ( $('.zustand1').html() != "E" ) {
+                  errors += "Beruf 1 muss für Neuanlage geändert werden.\n(Zustand E ist erforderlich)";
+                  boolerr = true;
+              } else {
+                  errors += "";
+                  boolerr = false;
+              }
+              
+              if ( $('.zustand2').html() != "E" ) {
+                  errors += "\n\nBeruf 2 muss für Neuanlage geändert werden.\n(Zustand E ist erforderlich)";
+                  boolerr = true;
+              } else {
+                  boolerr = false;
+              }
+   
+              if ( $('.zustand3').html() != "E" ) {
+                  errors += "\n\nBeruf 3 muss für Neuanlage geändert werden.\n(Zustand E ist erforderlich)";
+                    boolerr = true;
+                  } else {
+                     boolerr = false;
+                  }
+        }
+        if ( boolerr == true) {
+            alert(errors);
+        }else {
+            boolerr = false;
+        }
+    });
+          /* check for correct job list */
+      $('#joboffertype').change ( function () {
+         var errors = "";
+         var boolerr = false;
+          data-typ="A" data-quali="2,4"
+       
+          if ( $(this).val() == 38) { // Jobaction Neuanlage
+              if ( $('.ebene1').html() == 3 || $('.ebene2').html() == 3 || $('.ebene3').html() == 3 ) { //Helfer
+                  errors += "Beruf 1, 2 oder 3 muss für den Angebotstyp angepasst werden geändert werden.)";
+                  boolerr = true;
+              } else {
+                  errors += "";
+                  boolerr = false;
+              }
+       
+   
+              
+          }
+        if ( boolerr == true) {
+            alert(errors);
+        }else {
+            boolerr = false;
+        }
+    });
+    $('#jobedudegree').change (function () {
+       
+            if ( $(this).val() == "1" || $(this).val() == 0 ) {
+              if ( $('.hs1').html() != "nein" ) {
+                 alert( "Für Beruf 1 muss ein Hochschulabschluss vorliegen"); 
+              }
+            if ( $('.hs2').html() != "nein" ) {
+                 alert( "Für Beruf 2 muss ein Hochschulabschluss vorliegen"); 
+              }
+             if ( $('.hs3').html() != "nein" ) {
+                 alert( "Für Beruf 3 muss ein Hochschulabschluss vorliegen"); 
+              }
+            }
+            
+                //
+           
+        });
+    
+      
+      
+    if ( $('#jobleadership').val() != 1 ) {
+           $('.joblead').fadeIn();
+       } else {
+            $('.joblead').fadeOut();
+       } 
+      
+    $('.addrow').click ( function (ev) {
+        ev.preventDefault();
+        $( $(this).attr('data-load') ).fadeIn();
+       
+    })
+      
+      
+    $('#jobtermbool').change ( function () {
+       if ( $(this).val() != 2 ) {
+           $('.jobterm').fadeIn();
+       } else {
+            $('.jobterm').fadeOut();
+       } 
+    })
+      
+    $('#jobleadership').change ( function () {
+       if ( $(this).val() != 1 ) {
+           $('.joblead').fadeIn();
+       } else {
+            $('.joblead').fadeOut();
+       } 
+    })
+    $('#jobpayscale').change ( function () {
+        
+       if ( $(this).val() == 1 ) {
+           $('.jobagreement').fadeIn();
+       } else {
+          
+            $('.jobagreement').fadeOut();
+       } 
+    })
+    
+   $('.elmchanger').keyup( function () {
+
+				var current_input_length = $(this).val().length;
+				var current_input = $(this).val();
+                var suggest_url = $(this).attr('data-suggest'); 
+                var resultdiv = $(this).attr('data-result'); 
+                var job_title = $(this).attr('data-job-titlelm');
+                var numberof = $(this).attr('data-num');
+				if (current_input_length > 3) {
+
+					 	
+
+					$.post( suggest_url, { searchquery:current_input,searchtype: "job",resultdiv:resultdiv,titlelm:"."+job_title,numberof:numberof })
+
+					  .done(function( data ) {
+
+						console.log( "Data Loaded: " + data );
+
+						jQuery('.'+resultdiv).html(data);
+
+					  });
+
+					
+
+				} else {
+                    jQuery('.'+resultdiv).html('');
+                }
+
+     
+  });  
+      
+      
+      $('#jobknowledge').keyup( function () {
+
+				var current_input_length = $(this).val().length;
+				var current_input = $(this).val();
+                var suggest_url = $(this).attr('data-suggest'); 
+                var resultdiv = $(this).attr('data-result'); 
+                var allowed_type = $(this).attr('data-typ'); 
+                var allowed_quali = $(this).attr('data-quali'); 
+                var titlelm = $(this).attr('data-job-titlelm'); 
+             //s   var mainjobid
+				if (current_input_length > 3) {
+	                   $.post( suggest_url, { searchquery:current_input,searchtype: "learning",resultdiv:resultdiv,allowed_type:allowed_type,allowed_quali:allowed_quali,titlelm:titlelm })
+
+					  .done(function( data ) {
+
+						console.log( "Data Loaded: " + data );
+
+						jQuery('.'+resultdiv).html(data);
+
+					  });
+
+					
+
+				} else {
+                    jQuery('.'+resultdiv).html('');
+                }
+
+     
+  });     
+   
+      
+     
+  
+    
+  $('#jobeduname').keyup( function () {
+           	    var current_input_length = $(this).val().length;
+				var current_input = $(this).val();
+                var suggest_url = $(this).attr('data-suggest'); 
+				if (current_input_length > 3) {
+
+				$.post( suggest_url, { searchquery:current_input,searchtype: "job" })
+
+					  .done(function( data ) {
+
+						console.log( "Data Loaded: " + data );
+
+						jQuery('.searchformresult2').html(data);
+
+					  });
+
+					
+
+				} else {
+                    jQuery('.searchformresult2').html('');
+                }
+
+			});
+      
+    
+    $('.joblicense').keyup( function () {
+           	    
+        var license_result = $(this).attr('data-license-result');
+        var license_field_id = $(this).attr('id');
+        var license_name = $(this).attr('data-license-name');
+        var current_input_length = $("#"+license_field_id).val().length;
+		var current_input = $("#"+license_field_id).val();
+        var suggest_url = $("#"+license_field_id).attr('data-suggest'); 
+        var searchformresult = $(this).attr('data-result'); 
+            
+        if (current_input_length > 3) {
+          
+            $.post( suggest_url, { searchquery:current_input,searchtype: "license",resultdiv:"."+searchformresult,license_name:"."+license_name })
+                .done(function( data ) {
+                
+						console.log( "Data Loaded: " + data );
+						$('.'+license_result).html(data);
+            });
+        } else {
+                    $('.'+license_result).html('');
+                }
+    });
+    
+    $('.jobskills').keyup( function () {
+           	    
+        var skill_result = $(this).attr('data-skill-result');
+        var skill_field_id = $(this).attr('id');
+        //var skill_name = $(this).attr('data-skill-name');
+        var current_input_length = $("#"+skill_field_id).val().length;
+		var current_input = $("#"+skill_field_id).val();
+        var suggest_url = $("#"+skill_field_id).attr('data-suggest'); 
+            
+        if (current_input_length > 3) {
+
+					$.post( suggest_url, { searchquery:current_input,searchtype: "skill",resultdiv:"#"+skill_field_id })
+
+					  .done(function( data ) {
+
+						console.log( "Data Loaded: " + data );
+						jQuery('.'+skill_result).html(data);
+
+					  });
+
+					
+
+				} else {
+                    jQuery('.'+skill_result).html('');
+                }
+
+			});
+    
+    
+});
+})(jQuery);
+ 
